@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react"
 import { motion, AnimatePresence } from "framer-motion"
-import { Check, RotateCcw, ChevronRight, Camera, ScanLine, Keyboard } from "lucide-react"
+import { Check, RotateCcw, ChevronRight, Camera, ScanLine, Keyboard, AlertTriangle } from "lucide-react"
 import { useNavigate } from "react-router-dom"
 import { scanFace, type CubeState } from "../api/cube"
 
@@ -281,7 +281,12 @@ export default function ScanPage() {
               <p className="text-white/30 text-xs text-center">
                 Keep the cube in the same orientation, just tilt/rotate so {current.name} faces the lens.
               </p>
-              {error && <p className="text-red-400 text-xs">{error}</p>}
+              {error && (
+                <div className="flex items-start gap-2.5 w-full bg-red-500/5 border border-red-500/15 rounded-lg px-3.5 py-2.5">
+                  <AlertTriangle size={14} className="text-red-400 shrink-0 mt-0.5" />
+                  <p className="text-red-300 text-xs">{error}</p>
+                </div>
+              )}
               <button
                 onClick={startCamera}
                 className="liquid-glass rounded-full w-full py-3.5 text-white/90 uppercase tracking-[0.2em] text-sm"
@@ -332,12 +337,15 @@ export default function ScanPage() {
                 </div>
               )}
               {error && (
-                <div className="absolute top-3 left-3 right-3 z-10 bg-black/70 rounded-lg px-3 py-2 text-center">
-                  <p className="text-red-400 text-xs mb-2">{error}</p>
-                  <div className="flex gap-2 justify-center">
+                <div className="absolute top-3 left-3 right-3 z-10 bg-black/80 backdrop-blur-sm rounded-xl px-4 py-3 border border-red-500/15">
+                  <div className="flex items-start gap-2.5 mb-3">
+                    <AlertTriangle size={15} className="text-red-400 shrink-0 mt-0.5" />
+                    <p className="text-red-300 text-xs">{error}</p>
+                  </div>
+                  <div className="flex gap-2 justify-end">
                     <button
                       onClick={() => { setError(null); setCapturedImage(null) }}
-                      className="px-3 py-1 rounded-full bg-white/10 text-white/80 text-[10px] uppercase tracking-wider"
+                      className="px-3.5 py-1.5 rounded-full bg-white/10 text-white/80 text-[10px] uppercase tracking-wider hover:bg-white/15 transition-colors"
                     >
                       Try Again
                     </button>
@@ -349,7 +357,7 @@ export default function ScanPage() {
                         setStage("confirm")
                         setError(null)
                       }}
-                      className="px-3 py-1 rounded-full bg-white/10 text-white/80 text-[10px] uppercase tracking-wider"
+                      className="px-3.5 py-1.5 rounded-full bg-white/10 text-white/80 text-[10px] uppercase tracking-wider hover:bg-white/15 transition-colors"
                     >
                       Set Manually
                     </button>
@@ -409,7 +417,12 @@ export default function ScanPage() {
                   {confidence < 0.35 ? "Low confidence detected." : "Scan confidence looks good."}
                 </p>
               )}
-              {error && <p className="text-red-400 text-xs text-center">{error}</p>}
+              {error && (
+                <div className="flex items-start gap-2.5 w-full bg-red-500/5 border border-red-500/15 rounded-lg px-3.5 py-2.5">
+                  <AlertTriangle size={14} className="text-red-400 shrink-0 mt-0.5" />
+                  <p className="text-red-300 text-xs">{error}</p>
+                </div>
+              )}
               <div className="flex gap-3">
                 <button
                   onClick={() => { setColors(null); setConfidence(null); setError(null); setCapturedImage(null); setStage("intro") }}

@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react"
 import { motion } from "framer-motion"
-import { ArrowLeft, ChevronLeft, ChevronRight, CheckCircle } from "lucide-react"
+import { ArrowLeft, ChevronLeft, ChevronRight, CheckCircle, AlertTriangle } from "lucide-react"
 import { useNavigate, useLocation } from "react-router-dom"
 import { solveCube, applyMoves, type CubeState, type SolveResult } from "../api/cube"
 
@@ -91,12 +91,22 @@ export default function SolveGuidePage() {
         )}
 
         {error && !loading && (
-          <div className="flex flex-col items-center gap-4 pt-16">
-            <p className="text-red-400 text-sm text-center max-w-xs">{error}</p>
-            <button onClick={() => navigate("/scan")} className="text-white/50 underline text-xs">
-              Back to scan
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="flex flex-col items-center gap-5 pt-16 max-w-xs"
+          >
+            <div className="w-14 h-14 rounded-full bg-red-500/10 flex items-center justify-center">
+              <AlertTriangle size={28} className="text-red-400" />
+            </div>
+            <p className="text-white/80 text-sm text-center leading-relaxed">{error}</p>
+            <button
+              onClick={() => navigate("/scan")}
+              className="liquid-glass rounded-full px-7 py-3 text-white/90 uppercase tracking-[0.2em] text-xs"
+            >
+              Back to Scan
             </button>
-          </div>
+          </motion.div>
         )}
 
         {!loading && !error && solution?.success && (
