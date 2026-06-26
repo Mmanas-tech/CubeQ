@@ -34,7 +34,8 @@ function captureFrame(video: HTMLVideoElement): Promise<Blob | null> {
     const ctx = c.getContext("2d")
     if (!ctx) { resolve(null); return }
     ctx.drawImage(video, 0, 0)
-    c.toBlob((b) => resolve(b), "image/jpeg", 0.8)
+    // Higher JPEG quality to preserve HSV information
+    c.toBlob((b) => resolve(b), "image/jpeg", 0.95)
   })
 }
 
@@ -50,6 +51,7 @@ export default function ScanPage() {
   const [error, setError] = useState<string | null>(null)
   const [camStream, setCamStream] = useState<MediaStream | null>(null)
   const [capturedImage, setCapturedImage] = useState<string | null>(null)
+  const [confidence, setConfidence] = useState<number | null>(null)
 
   const current = SCAN_ORDER[faceIndex]
 
@@ -103,6 +105,15 @@ export default function ScanPage() {
     try {
       const result = await scanFace(blob, current.face)
       setColors(result.colors)
+      setConfidence(result.confidence ?? null)
+
+      // If low confidence, warn but still allow confirmation/manual correction
+      if (result.confidence !== undefined && result.confidence < 0.35) {
+        setError("Low confidence—retake for better accuracy, or confirm to set manually.")
+      } else {
+        setError(null)
+      }
+
       stopCamera()
       setStage("confirm")
     } catch (e) {
@@ -122,15 +133,16 @@ export default function ScanPage() {
 
   function handleConfirm() {
     if (!colors) return
-    setFaceResults((prev) => ({ ...prev, [current.face]: colors }))
-    setCapturedImage(null)
-    if (faceIndex < SCAN_ORDER.length - 1) {
-      setFaceIndex((i) => i + 1)
-      setColors(null)
-      setStage("intro")
-    } else {
-      setStage("done")
-    }
+      setFaceResults((prev) => ({ ...prev, [current.face]: colors }))
+      setCapturedImage(null)
+      setConfidence(null)
+      if (faceIndex < SCAN_ORDER.length - 1) {
+        setFaceIndex((i) => i + 1)
+        setColors(null)
+        setStage("intro")
+      } else {
+        setStage("done")
+      }
   }
 
   function handleSolve() {
@@ -233,7 +245,14 @@ export default function ScanPage() {
                 Open Camera
               </button>
               <button
-                onClick={() => { setColors(Array(9).fill(SOLVED_COLORS[current.face])); stopCamera(); setCapturedImage(null); setStage("confirm") }}
+                onClick={() => {
+                  setColors(Array(9).fill(SOLVED_COLORS[current.face]))
+                  setConfidence(null)
+                  stopCamera()
+                  setCapturedImage(null)
+                  setError(null)
+                  setStage("confirm")
+                }}
                 className="flex items-center gap-2 text-white/40 text-xs uppercase tracking-widest hover:text-white/70 transition-colors"
               >
                 <Keyboard size={14} /> or tap to set colors manually
@@ -270,7 +289,13 @@ export default function ScanPage() {
                 Open Camera
               </button>
               <button
-                onClick={() => { setColors(Array(9).fill(SOLVED_COLORS[current.face])); setCapturedImage(null); setStage("confirm") }}
+                onClick={() => {
+                  setColors(Array(9).fill(SOLVED_COLORS[current.face]))
+                  setConfidence(null)
+                  setCapturedImage(null)
+                  setStage("confirm")
+                  setError(null)
+                }}
                 className="flex items-center gap-2 text-white/40 text-xs uppercase tracking-widest hover:text-white/70 transition-colors"
               >
                 <Keyboard size={14} /> or tap to set colors manually
@@ -319,6 +344,7 @@ export default function ScanPage() {
                     <button
                       onClick={() => {
                         setColors(Array(9).fill(SOLVED_COLORS[current.face]))
+                        setConfidence(null)
                         stopCamera()
                         setStage("confirm")
                         setError(null)
@@ -378,10 +404,15 @@ export default function ScanPage() {
                   />
                 ))}
               </div>
+              {confidence !== null && (
+                <p className={`text-xs text-center ${confidence < 0.35 ? "text-red-400" : "text-white/40"}`}>
+                  {confidence < 0.35 ? "Low confidence detected." : "Scan confidence looks good."}
+                </p>
+              )}
               {error && <p className="text-red-400 text-xs text-center">{error}</p>}
               <div className="flex gap-3">
                 <button
-                  onClick={() => { setColors(null); setError(null); setCapturedImage(null); setStage("intro") }}
+                  onClick={() => { setColors(null); setConfidence(null); setError(null); setCapturedImage(null); setStage("intro") }}
                   className="flex items-center gap-1.5 px-5 py-2.5 rounded-full border border-white/15 text-white/60 text-xs uppercase tracking-widest hover:text-white transition-colors"
                 >
                   <RotateCcw size={13} /> Retake

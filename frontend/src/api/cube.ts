@@ -54,7 +54,10 @@ export async function applyMoves(
   })
 }
 
-export async function scanFace(imageBlob: Blob, face: string): Promise<{ face: string; colors: string[] }> {
+export async function scanFace(
+  imageBlob: Blob,
+  face: string
+): Promise<{ face: string; colors: string[]; confidence?: number }> {
   const formData = new FormData()
   formData.append('file', imageBlob, 'face.jpg')
   const res = await fetch(`${API_BASE}/scan-face?face=${face}`, { method: 'POST', body: formData })

@@ -85,16 +85,20 @@ async def scan_face(file: UploadFile = File(...), face: str = "F"):
     try:
         import cv2
         import numpy as np
+
         contents = await file.read()
         nparr = np.frombuffer(contents, np.uint8)
         image = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
         if image is None:
             return JSONResponse(status_code=400, content={"error": "Could not decode image"})
-        from vision.scanner import scan_single_face
-        colors = scan_single_face(image, face)
+
+        from vision.scanner import scan_single_face_with_confidence
+
+        colors, confidence = scan_single_face_with_confidence(image, face)
         if colors is None:
             return JSONResponse(status_code=400, content={"error": "Could not detect cube face"})
-        return {"face": face, "colors": colors}
+
+        return {"face": face, "colors": colors, "confidence": confidence}
     except ImportError:
         return JSONResponse(status_code=500, content={"error": "OpenCV not available"})
 

@@ -279,7 +279,12 @@ def is_solved(state):
 
 
 def state_to_tuple(state):
-    return ''.join(state[face][i] for face in ALL_FACES for i in range(9))
+    """Convert cube state into a hashable tuple.
+
+    Tests expect the result to be a `tuple` (not a string).
+    """
+    return tuple(state[face][i] for face in ALL_FACES for i in range(9))
+
 
 
 def count_displaced_stickers(state):

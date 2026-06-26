@@ -23,6 +23,71 @@ def state_to_facelets(state: Dict[str, List[str]]) -> str:
 
 
 def solve(state: Dict[str, List[str]], timeout: float = 30) -> Dict:
+    """Solve using Kociemba two-phase search."""
+    valid, err = validate_cube(state)
+    if not valid:
+        return {'success': False, 'error': err, 'moves': [], 'method': None}
+
+    if is_solved(state):
+        return {'success': True, 'moves': [], 'method': 'already_solved', 'move_count': 0}
+
+    start_time = time.time()
+
+    try:
+        from kociemba.search import Search
+        from kociemba.tools import verify
+
+        facelets = state_to_facelets(state)
+        v = verify(facelets)
+        if v != 0:
+            err_map = {
+                1: 'Wrong number of stickers per color — please re-check all faces',
+                2: 'Edges are in impossible positions — please re-scan or re-enter colors carefully',
+                3: 'Corners are in impossible positions — please re-scan or re-enter colors carefully',
+                4: 'Edge orientation is impossible — please re-scan or re-enter colors carefully',
+                5: 'Corner orientation is impossible — please re-scan or re-enter colors carefully',
+                6: 'Parity error — please re-scan or re-enter colors carefully',
+            }
+            return {
+                'success': False,
+                'error': err_map.get(v, f'Invalid cube state (error {v}) — please re-scan all faces'),
+                'moves': [],
+                'method': None,
+            }
+
+        sol_str = Search().solution(facelets, maxDepth=25, timeOut=max(1, int(timeout)), useSeparator=False)
+        if sol_str is None:
+            return {'success': False, 'error': 'kociemba could not find solution', 'moves': [], 'method': None}
+
+        koc_moves = sol_str.replace(".", "").split()
+        our_moves = [KOC_TO_OUR[t] for t in koc_moves]
+
+        result_state = state
+        for m in our_moves:
+            result_state = apply_move(result_state, m)
+
+        if not is_solved(result_state):
+            return {'success': False, 'error': 'solution verification failed', 'moves': [], 'method': None}
+
+        return {
+            'success': True,
+            'moves': our_moves,
+            'method': 'kociemba',
+            'move_count': len(our_moves),
+            'solve_time': round(time.time() - start_time, 3),
+        }
+    except Exception as e:
+        return {'success': False, 'error': str(e), 'moves': [], 'method': None}
+
+
+def solve_ida_star(state: Dict[str, List[str]], timeout: float = 30) -> Dict:
+    """Backward-compatible API expected by tests.
+
+    This project currently uses the Kociemba solver in `solve()`.
+    `solve_ida_star()` is provided to keep older test suites working.
+    """
+    return solve(state, timeout=timeout)
+
     valid, err = validate_cube(state)
     if not valid:
         return {'success': False, 'error': err, 'moves': [], 'method': None}
