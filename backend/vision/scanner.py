@@ -2,8 +2,6 @@ import cv2
 import numpy as np
 from typing import List, Optional, Tuple
 
-from core.cube import ALL_FACES
-
 
 def _clamp(v: int, lo: int, hi: int) -> int:
     return max(lo, min(hi, v))

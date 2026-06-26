@@ -4,7 +4,7 @@ from pydantic import BaseModel
 from typing import Dict, List, Optional
 from core.cube import (
     create_solved, apply_move, apply_moves, is_solved,
-    scramble, MOVES, ALL_FACES, state_to_tuple
+    scramble, MOVES, ALL_FACES
 )
 from core.solver import solve
 from core.validator import validate_cube
