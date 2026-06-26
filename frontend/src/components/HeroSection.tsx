@@ -48,26 +48,15 @@ export default function HeroSection() {
           and curiosity.
         </motion.p>
 
-        <div className="flex flex-col sm:flex-row items-center gap-3">
-          <motion.button
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 2.0, ease: "easeOut" }}
-            onClick={() => navigate('/moves')}
-            className="liquid-glass rounded-full px-7 py-3.5 sm:px-10 sm:py-4 text-white/90 uppercase tracking-[0.18em] sm:tracking-[0.2em] text-sm cursor-pointer"
-          >
-            Moves (Learn First)
-          </motion.button>
-          <motion.button
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 2.2, ease: "easeOut" }}
-            onClick={() => navigate('/scan')}
-            className="rounded-full px-7 py-3.5 sm:px-10 sm:py-4 text-white/40 hover:text-white/70 uppercase tracking-[0.18em] sm:tracking-[0.2em] text-sm cursor-pointer transition-colors"
-          >
-            Scan & Solve
-          </motion.button>
-        </div>
+        <motion.button
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 2.0, ease: "easeOut" }}
+          onClick={() => navigate('/scan')}
+          className="liquid-glass rounded-full px-7 py-3.5 sm:px-10 sm:py-4 text-white/90 uppercase tracking-[0.18em] sm:tracking-[0.2em] text-sm cursor-pointer"
+        >
+          Scan & Solve
+        </motion.button>
       </div>
     </div>
   )

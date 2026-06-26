@@ -118,86 +118,112 @@ export default function SolveGuidePage() {
                 </button>
               </motion.div>
             ) : (
-              <>
-                <div className="flex items-center gap-2 mb-6">
-                  <span className="text-white/40 text-xs uppercase tracking-widest">
-                    Move {step + 1} / {total}
-                  </span>
-                  <div className="flex-1 w-32 h-1 rounded-full bg-white/10">
-                    <div
-                      className="h-full rounded-full bg-white/30 transition-all"
-                      style={{ width: `${((step) / total) * 100}%` }}
-                    />
-                  </div>
-                </div>
-
-                <motion.div
-                  key={step}
-                  initial={{ opacity: 0, scale: 0.9 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  className="mb-8"
-                >
-                  <div className="text-[64px] sm:text-[80px] font-light tracking-tight text-white font-garamond text-center leading-none">
-                    {moves[step]}
-                  </div>
-                </motion.div>
-
-                {intermediateStates[step] && (
-                  <div className="mb-6 scale-[0.85] sm:scale-100">
-                    <div
-                      className="grid"
-                      style={{
-                        gridTemplateColumns: "repeat(4, auto)",
-                        gridTemplateRows: "repeat(3, auto)",
-                        gap: "2px",
-                      }}
-                    >
-                      {Object.entries(FACE_POS).map(([face, pos]) => (
-                        <div
-                          key={face}
-                          className="grid grid-cols-3 gap-px p-[3px] rounded-lg"
-                          style={{
-                            backgroundColor: "rgba(255,255,255,0.05)",
-                            gridRow: pos.row + 1,
-                            gridColumn: pos.col + 1,
-                          }}
-                        >
-                          {intermediateStates[step][face].map((color, i) => (
-                            <div
-                              key={i}
-                              className="w-[18px] h-[18px] sm:w-[24px] sm:h-[24px] rounded-sm"
-                              style={{
-                                backgroundColor: COLOR_MAP[color] || "#333",
-                                boxShadow: "inset 0 0 2px rgba(0,0,0,0.35)",
-                              }}
-                            />
-                          ))}
-                        </div>
-                      ))}
+              <div className="flex flex-col lg:flex-row gap-8 w-full max-w-4xl items-start justify-center">
+                <div className="flex flex-col items-center">
+                  <div className="flex items-center gap-2 mb-6">
+                    <span className="text-white/40 text-xs uppercase tracking-widest">
+                      Move {step + 1} / {total}
+                    </span>
+                    <div className="flex-1 w-32 h-1 rounded-full bg-white/10">
+                      <div
+                        className="h-full rounded-full bg-white/30 transition-all"
+                        style={{ width: `${((step) / total) * 100}%` }}
+                      />
                     </div>
                   </div>
-                )}
 
-                <p className="text-white/30 text-xs mb-6 text-center">
-                  Perform this move on your cube, then tap Next.
-                </p>
+                  <motion.div
+                    key={step}
+                    initial={{ opacity: 0, scale: 0.9 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    className="mb-8"
+                  >
+                    <div className="text-[64px] sm:text-[80px] font-light tracking-tight text-white font-garamond text-center leading-none">
+                      {moves[step]}
+                    </div>
+                  </motion.div>
 
-                <div className="flex items-center gap-4">
-                  <button
-                    onClick={() => setStep(Math.max(0, step - 1))}
-                    disabled={step === 0}
-                    className="flex items-center gap-1 px-5 py-2.5 rounded-full border border-white/15 text-white/60 text-xs uppercase tracking-widest disabled:opacity-30 hover:text-white transition-colors"
-                  >
-                    <ChevronLeft size={15} /> Prev
-                  </button>
-                  <button
-                    onClick={() => setStep(Math.min(total, step + 1))}
-                    className="liquid-glass flex items-center gap-1 px-6 py-2.5 rounded-full text-white/90 text-xs uppercase tracking-widest"
-                  >
-                    {step + 1 >= total ? "Finish" : "Next"} <ChevronRight size={15} />
-                  </button>
+                  {intermediateStates[step] && (
+                    <div className="mb-6 scale-[0.85] sm:scale-100">
+                      <div
+                        className="grid"
+                        style={{
+                          gridTemplateColumns: "repeat(4, auto)",
+                          gridTemplateRows: "repeat(3, auto)",
+                          gap: "2px",
+                        }}
+                      >
+                        {Object.entries(FACE_POS).map(([face, pos]) => (
+                          <div
+                            key={face}
+                            className="grid grid-cols-3 gap-px p-[3px] rounded-lg"
+                            style={{
+                              backgroundColor: "rgba(255,255,255,0.05)",
+                              gridRow: pos.row + 1,
+                              gridColumn: pos.col + 1,
+                            }}
+                          >
+                            {intermediateStates[step][face].map((color, i) => (
+                              <div
+                                key={i}
+                                className="w-[18px] h-[18px] sm:w-[24px] sm:h-[24px] rounded-sm"
+                                style={{
+                                  backgroundColor: COLOR_MAP[color] || "#333",
+                                  boxShadow: "inset 0 0 2px rgba(0,0,0,0.35)",
+                                }}
+                              />
+                            ))}
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  <p className="text-white/30 text-xs mb-6 text-center">
+                    Perform this move on your cube, then tap Next.
+                  </p>
+
+                  <div className="flex items-center gap-4">
+                    <button
+                      onClick={() => setStep(Math.max(0, step - 1))}
+                      disabled={step === 0}
+                      className="flex items-center gap-1 px-5 py-2.5 rounded-full border border-white/15 text-white/60 text-xs uppercase tracking-widest disabled:opacity-30 hover:text-white transition-colors"
+                    >
+                      <ChevronLeft size={15} /> Prev
+                    </button>
+                    <button
+                      onClick={() => setStep(Math.min(total, step + 1))}
+                      className="liquid-glass flex items-center gap-1 px-6 py-2.5 rounded-full text-white/90 text-xs uppercase tracking-widest"
+                    >
+                      {step + 1 >= total ? "Finish" : "Next"} <ChevronRight size={15} />
+                    </button>
+                  </div>
                 </div>
-              </>
+
+                <div className="hidden lg:flex flex-col gap-2 p-5 rounded-xl bg-white/[0.03] border border-white/10 min-w-[200px] self-start">
+                  <p className="text-white/40 text-[10px] uppercase tracking-widest mb-2">Notation</p>
+                  {[
+                    ["R", "turn right side up once"], ["R'", "turn right side down once"], ["R2", "turn right side twice"],
+                    ["L", "turn left side down once"], ["L'", "turn left side up once"], ["L2", "turn left side twice"],
+                    ["U", "turn top side left once"], ["U'", "turn top side right once"], ["U2", "turn top side twice"],
+                    ["D", "turn bottom side right once"], ["D'", "turn bottom side left once"], ["D2", "turn bottom side twice"],
+                    ["F", "turn front side right once"], ["F'", "turn front side left once"], ["F2", "turn front side twice"],
+                    ["B", "turn back side right once"], ["B'", "turn back side left once"], ["B2", "turn back side twice"],
+                  ].map(([notation, desc]) => (
+                    <div
+                      key={notation}
+                      className={`flex items-center gap-2 px-3 py-1 rounded-md text-[11px] ${
+                        moves[step] === notation
+                          ? "bg-white/10 text-white"
+                          : "text-white/50"
+                      }`}
+                    >
+                      <span className="font-mono font-bold w-7 text-right">{notation}</span>
+                      <span className="text-[10px]">{desc}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
             )}
           </>
         )}
